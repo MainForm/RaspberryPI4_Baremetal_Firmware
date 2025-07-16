@@ -7,17 +7,24 @@ CC = $(TOOLCHAIN_PREFIX)-gcc
 LD = $(TOOLCHAIN_PREFIX)-ld
 OBJCOPY = $(TOOLCHAIN_PREFIX)-objcopy
 
+LD_SCRIPT = linker.ld
+
+INCLUDE_DIRS = -Iinclude
+
+ASFLAG = -c -g
+CFLAG  = -c -g -Wall
+
+BUILD_DIR = build
+
 SRC_DIR = src
+
 AS_SRCS = $(shell find $(SRC_DIR) -name '*.S')
 AS_OBJS = $(AS_SRCS:$(SRC_DIR)/%.S=$(BUILD_DIR)/%.os)
 
-LD_SCRIPT = linker.ld
+C_SRCS = $(shell find $(SRC_DIR) -name '*.c')
+C_OBJS = $(C_SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
-ASFLAG = -c -g
-
-BUILD_DIR = build
 TARGET = image
-
 ELF_FILE = kernel.elf
 
 FIRMWARE_DIR = firmware
@@ -38,6 +45,10 @@ $(ELF_FILE): $(AS_OBJS) $(C_OBJS)
 $(AS_OBJS): $(BUILD_DIR)/%.os: $(SRC_DIR)/%.S
 	@mkdir -p $(dir $@)
 	$(CC) -march=$(ARCH) -mcpu=$(MCPU) $(ASFLAG) $(INCLUDE_DIRS) -o $@ $<
+
+$(C_OBJS): $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) -march=$(ARCH) -mcpu=$(MCPU) $(CFLAG) $(INCLUDE_DIRS) -o $@ $<
 
 clean:
 	@rm -rf $(BUILD_DIR)
