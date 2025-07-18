@@ -1,0 +1,27 @@
+#ifndef __BCM2711_UART_H__
+#define __BCM2711_UART_H__
+
+#include <stdint.h>
+
+// Default UART0 clock
+#define UART0_CLK               (48000000)
+
+// DR(Data Register) Register bits
+#define UART_DATA               (0xFF)
+
+// CR(Control Register) Register bits
+#define UART_RXE                (0x01 << 9)
+#define UART_TXE                (0x01 << 8)
+#define UART_UARTEN             (0x01)
+
+// FR(Flag Register) Register bits
+#define UART_TXFF               (0x01 << 5)
+#define UART_RXFE               (0x01 << 4)
+
+// LCRH(Line Control Register) Register bits
+#define UART_WLEN_8BIT          (0x03 << 5)
+
+void UART_Initialize();
+void UART_SendWord(uint8_t data);
+
+#endif
