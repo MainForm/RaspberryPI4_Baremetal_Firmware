@@ -22,7 +22,25 @@ void UART_Initialize(){
 }
 
 void UART_SendWord(uint8_t data){
+    // UART Tx 버퍼에 남은 메모리 공간이 있는지 확인
     while(REG_32(BCM2711_UART0_FR) & UART_TXFF);
 
+    // 데이터 송신
     REG_32(BCM2711_UART0_DR) = data;
+}
+
+uint32_t UART_ReceiveWord(){
+    // UART Rx 버퍼 수신 해야할 데이터가 있는 경우
+    while(REG_32(BCM2711_UART0_FR) & UART_RXFE);
+
+    // UART Rx 버퍼로 부터 word 길이의 데이터 수신
+    uint32_t DataRegValue = REG_32(BCM2711_UART0_DR);
+    // 만약 해당 데이터를 수신하는 동안 에러가 발생한 경우
+    if(DataRegValue & (UART_OE | UART_BE | UART_PE | UART_FE)){
+        // 에러 코드 리턴
+        return UART_INVALID_DATA;
+    }
+
+    // 정상적으로 수신된 데이터 리턴
+    return DataRegValue & UART_DATA;
 }
