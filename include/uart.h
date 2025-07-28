@@ -30,7 +30,7 @@
 // LCRH(Line Control Register) Register bits
 #define UART_WLEN_8BIT          (0x03 << 5)
 
-void UART_Initialize();
+void UART_Initialize(uint32_t baudrate);
 void UART_SendWord(uint8_t data);
 
 uint32_t UART_ReceiveWord();

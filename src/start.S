@@ -14,6 +14,17 @@ _start:
     MSR     cpacr_el1, x0
     ISB
 
+    // Clear the entire BSS section to 0.
+    ADR     x1, __bss_start__
+    ADR     X2, __bss_end__
+    MOV     x0, #0
+    clear_bss:
+        CMP     x1, X2
+        B.HS    done_clear
+        STR     x0, [x1], #8
+        B       clear_bss
+    done_clear:
+
     // main.c 에 작성한 main 함수로 분기
     BL  main
 

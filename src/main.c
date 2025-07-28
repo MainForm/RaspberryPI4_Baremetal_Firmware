@@ -5,23 +5,23 @@ void delay(volatile int val){
     while(val-- > 0);
 }
 
+int test;
+
 int main(void){
     uint32_t recvData;
 
     // UART 초기화
-    UART_Initialize();
+    UART_Initialize(115200);
 
     while(1){
-        // UART로 데이터 수신
-        recvData = UART_ReceiveWord();
-
-        // 데이터 수신 중 에러가 발생하면 다음 데이터 수신
-        if(recvData == UART_INVALID_DATA){
-            continue;
+        if(test == 0){
+            UART_SendWord('0');
         }
-
-        // 데이터 다시 송신
-        UART_SendWord((uint8_t)recvData);
+        else{
+            UART_SendWord('1');
+        }
+        UART_SendWord('\n');
+        delay(0x400000);
     }
 
     return 0;

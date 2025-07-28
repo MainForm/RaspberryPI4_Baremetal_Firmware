@@ -34,6 +34,14 @@ void UART_SendWord(uint8_t data){
     REG_32(BCM2711_UART0_DR) = data;
 }
 
+void UART_SendString(const char * str){
+    while(*str != '\0'){
+        UART_SendWord((uint8_t)*str);
+
+        ++str;
+    }
+}
+
 uint32_t UART_ReceiveWord(){
     // UART Rx 버퍼 수신 해야할 데이터가 있는 경우
     while(REG_32(BCM2711_UART0_FR) & UART_RXFE);
