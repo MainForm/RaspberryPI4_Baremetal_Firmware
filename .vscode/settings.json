@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "bcm2711_peripheral.h": "c",
+        "uart.h": "c",
+        "stdint.h": "c",
+        "gpio.h": "c"
+    }
+}

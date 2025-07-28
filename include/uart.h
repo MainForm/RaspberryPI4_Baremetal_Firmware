@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 // Default UART0 clock
-#define UART0_CLK               (48000000)
+#define UARTCLK               (48000000)
 
 // DR(Data Register) Register bits
 #define UART_DATA               (0xFF)

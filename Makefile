@@ -7,6 +7,11 @@ CC = $(TOOLCHAIN_PREFIX)-gcc
 LD = $(TOOLCHAIN_PREFIX)-ld
 OBJCOPY = $(TOOLCHAIN_PREFIX)-objcopy
 
+QEMU := qemu-system-aarch64
+QEMU_FLAG := -nographic
+QEMU_RAM_SIZE := 2G
+QEMU_MACHINE_NAME := raspi4b
+
 LD_SCRIPT = linker.ld
 
 INCLUDE_DIRS = -Iinclude
@@ -29,7 +34,7 @@ ELF_FILE = kernel.elf
 
 FIRMWARE_DIR = firmware
 
-.PHONY: all clean
+.PHONY: all clean qemu_run
 
 all: $(TARGET)
 
@@ -49,6 +54,9 @@ $(AS_OBJS): $(BUILD_DIR)/%.os: $(SRC_DIR)/%.S
 $(C_OBJS): $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) -march=$(ARCH) -mcpu=$(MCPU) $(CFLAG) $(INCLUDE_DIRS) -o $@ $<
+
+qemu_run: $(TARGET)
+	$(QEMU) -M $(QEMU_MACHINE_NAME) -m $(QEMU_RAM_SIZE) -kernel $(BUILD_DIR)/output/$(TARGET) $(QEMU_FLAG)
 
 clean:
 	@rm -rf $(BUILD_DIR)
