@@ -1,16 +1,18 @@
 ARCH = armv8-a
 MCPU = cortex-a72
 
-TOOLCHAIN_PREFIX = aarch64-linux-gnu
+TOOLCHAIN_PREFIX = aarch64-none-elf
 AS = $(TOOLCHAIN_PREFIX)-as
 CC = $(TOOLCHAIN_PREFIX)-gcc
 LD = $(TOOLCHAIN_PREFIX)-ld
+GDB = $(TOOLCHAIN_PREFIX)-gdb
 OBJCOPY = $(TOOLCHAIN_PREFIX)-objcopy
 
 QEMU := qemu-system-aarch64
 QEMU_FLAG := -nographic
 QEMU_RAM_SIZE := 2G
 QEMU_MACHINE_NAME := raspi4b
+QEMU_DEBUG_FLAG := -S -gdb tcp::1234,ipv4
 
 LD_SCRIPT = linker.ld
 
@@ -57,6 +59,17 @@ $(C_OBJS): $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 
 qemu_run: $(TARGET)
 	$(QEMU) -M $(QEMU_MACHINE_NAME) -m $(QEMU_RAM_SIZE) -kernel $(BUILD_DIR)/output/$(TARGET) $(QEMU_FLAG)
+
+qemu_debug: $(TARGET)
+	$(QEMU) -M $(QEMU_MACHINE_NAME) -m $(QEMU_RAM_SIZE) -kernel $(BUILD_DIR)/output/$(TARGET) $(QEMU_FLAG) $(QEMU_DEBUG_FLAG)
+
+gdb:
+	$(GDB) -ex "file $(BUILD_DIR)/$(ELF_FILE)" 	\
+		-ex "target remote localhost:1234"	\
+		-ex "layout asm"					\
+		-ex "layout regs"					\
+		-ex "break _start"					\
+		-ex "continue"
 
 clean:
 	@rm -rf $(BUILD_DIR)
